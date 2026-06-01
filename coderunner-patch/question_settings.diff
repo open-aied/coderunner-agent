@@ -1,0 +1,88 @@
+diff --git a/db/install.xml b/db/install.xml
+index 9eebfbb..8000cb1 100644
+--- a/db/install.xml
++++ b/db/install.xml
+@@ -54,6 +54,7 @@
+         <FIELD NAME="displayfeedback" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="0 to allow display of specific feedback to be controlled by quiz, 1 to force display, 2 to force hide"/>
+         <FIELD NAME="giveupallowed" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="When enabled, students see a button to stop interacting with the question, and instead see the general feedback. 0 = Off. 1 = button shows once best possible score cannot be improved. 2 = Always available."/>
+         <FIELD NAME="prototypeextra" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="An extra text field available for use by prototype or customised code."/>
++        <FIELD NAME="agentphasefree" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="When enabled, SRL phase is suggested based on student state."/>
+       </FIELDS>
+       <KEYS>
+         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+diff --git a/db/upgrade.php b/db/upgrade.php
+index 4efb346..0cdab18 100644
+--- a/db/upgrade.php
++++ b/db/upgrade.php
+@@ -438,6 +438,16 @@ function xmldb_qtype_coderunner_upgrade($oldversion) {
+         upgrade_plugin_savepoint(true, 2025071100, 'qtype', 'coderunner');
+     }
+ 
++    if ($oldversion < 2026031500) {
++        $dbman = $DB->get_manager();
++        $table = new xmldb_table('question_coderunner_options');
++        $field = new xmldb_field('agentphasefree', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'prototypeextra');
++        if (!$dbman->field_exists($table, $field)) {
++            $dbman->add_field($table, $field);
++        }
++        upgrade_plugin_savepoint(true, 2026031500, 'qtype', 'coderunner');
++    }
++
+     require_once(__DIR__ . '/upgradelib.php');
+     update_question_types();
+ 
+diff --git a/edit_coderunner_form.php b/edit_coderunner_form.php
+index 348acf0..776cf48 100644
+--- a/edit_coderunner_form.php
++++ b/edit_coderunner_form.php
+@@ -800,6 +800,16 @@ class qtype_coderunner_edit_form extends question_edit_form {
+         $mform->setDefault('displayfeedback', constants::FEEDBACK_SHOW);
+         $mform->setType('displayfeedback', PARAM_INT);
+ 
++        // Auto SRL phase detection.
++        $mform->addElement(
++            'advcheckbox',
++            'agentphasefree',
++            get_string('agentphasefree', 'qtype_coderunner'),
++            get_string('agentphasefree_label', 'qtype_coderunner')
++        );
++        $mform->setDefault('agentphasefree', 0);
++        $mform->addHelpButton('agentphasefree', 'agentphasefree', 'qtype_coderunner');
++
+         // Marking controls.
+         $markingelements = [];
+         $markingelements[] = $mform->createElement(
+diff --git a/question.php b/question.php
+index 88013fa..8828c11 100644
+--- a/question.php
++++ b/question.php
+@@ -175,6 +175,9 @@ class qtype_coderunner_question extends question_graded_automatically {
+     /** @var ?string Extra data for use by prototype or customised code. */
+     public $prototypeextra;
+ 
++    /** @var int Whether to auto-detect SRL phase based on student state. */
++    public $agentphasefree;
++
+     /** @var ?array The answers of the question (unused - for superclass compatibility only) */
+     public $answers;
+ 
+diff --git a/questiontype.php b/questiontype.php
+index 06159eb..46d0ae3 100644
+--- a/questiontype.php
++++ b/questiontype.php
+@@ -132,6 +132,7 @@ class qtype_coderunner extends question_type {
+             'displayfeedback',
+             'giveupallowed',
+             'prototypeextra',
++            'agentphasefree',
+         ];
+     }
+ 
+@@ -170,6 +171,7 @@ class qtype_coderunner extends question_type {
+             'filenamesexplain',
+             'displayfeedback',
+             'giveupallowed',
++            'agentphasefree',
+         ];
+     }
+ 

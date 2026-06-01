@@ -1,0 +1,142 @@
+.cra-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cra-filters {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 12px;
+}
+
+.cra-filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.cra-filter-group label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.cra-export-buttons {
+    margin-left: auto;
+}
+
+.cra-overview-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+}
+
+.cra-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px 16px;
+    text-align: center;
+}
+
+.cra-card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f6cbf;
+}
+
+.cra-card-label {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+.cra-chart-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.cra-chart-box {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.cra-chart-box h5 {
+    margin-bottom: 12px;
+}
+
+.cra-heatmap {
+    font-size: 12px;
+    overflow-x: auto;
+}
+
+.cra-heatmap table {
+    margin-bottom: 0;
+}
+
+.cra-heatmap td,
+.cra-heatmap th {
+    padding: 4px 6px;
+    white-space: nowrap;
+}
+
+.cra-student-section {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.cra-student-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cra-student-header h4 {
+    margin: 0;
+}
+
+.cra-student-header input {
+    max-width: 250px;
+}
+
+.cra-student-detail {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.cra-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cra-detail-header h4 {
+    margin: 0;
+}
+
+.cra-detail-body {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 768px) {
+    .cra-overview-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cra-chart-row {
+        grid-template-columns: 1fr;
+    }
+
+    .cra-detail-body {
+        grid-template-columns: 1fr;
+    }
+}

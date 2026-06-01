@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+pytest-cache-files-*/
+.DS_Store
+.env
+.claude/
+.superpowers/
+docs/superpowers/
+
+# Setup-generated sources (cloned by setup.sh)
+moodle-src/
+plugins/coderunner/
+plugins/qbehaviour/
+
+# Runtime data
+agent/data/
+data/
+node_modules/

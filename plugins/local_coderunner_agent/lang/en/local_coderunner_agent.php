@@ -1,0 +1,34 @@
+<?php
+defined('MOODLE_INTERNAL') || die();
+
+$string['pluginname'] = 'CodeRunner Agent Dashboard';
+$string['dashboard'] = 'Agent Dashboard';
+$string['coderunner_agent:viewdashboard'] = 'View CodeRunner Agent Dashboard';
+$string['totalinteractions'] = 'Total Interactions';
+$string['activestudents'] = 'Active Students';
+$string['exercisesused'] = 'Exercises Used';
+$string['avgresponsetime'] = 'Avg Response Time';
+$string['thumbsup'] = 'Thumbs Up';
+$string['thumbsdown'] = 'Thumbs Down';
+$string['satisfaction'] = 'Satisfaction';
+$string['phasedistribution'] = 'SRL Phase Distribution';
+$string['usagetimeline'] = 'Usage Timeline';
+$string['exerciseheatmap'] = 'Exercise Heatmap';
+$string['strategyusage'] = 'Strategy Usage by Phase';
+$string['studentactivity'] = 'Student Activity';
+$string['viewdetail'] = 'View Detail';
+$string['refresh'] = 'Refresh';
+$string['exportraw'] = 'Export Raw (CSV)';
+$string['exportsummary'] = 'Export Summary';
+$string['course'] = 'Course';
+$string['datefrom'] = 'From';
+$string['dateto'] = 'To';
+$string['student'] = 'Student';
+$string['interactions'] = 'Interactions';
+$string['topphase'] = 'Top Phase';
+$string['exercises'] = 'Exercises';
+$string['lastactive'] = 'Last Active';
+$string['nodata'] = 'No interaction data found.';
+$string['agentsettings'] = 'Agent Settings';
+$string['dashboardtimezone'] = 'Dashboard timezone';
+$string['dashboardtimezone_desc'] = 'IANA timezone used to display Agent dashboard timestamps, for example Asia/Tokyo, UTC, or America/New_York.';

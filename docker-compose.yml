@@ -1,0 +1,85 @@
+services:
+
+  # ── Database ──────────────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: cra-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-moodle_root}
+      MYSQL_DATABASE: moodle
+      MYSQL_USER: moodle
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-moodle}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-uroot", "-p${MYSQL_ROOT_PASSWORD:-moodle_root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  # ── Moodle ────────────────────────────────────────────────────────────────
+  moodle:
+    build: ./moodle
+    container_name: cra-moodle
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${MOODLE_PORT:-80}:80"
+    environment:
+      MOODLE_DB_HOST: db
+      MOODLE_DB_NAME: moodle
+      MOODLE_DB_USER: moodle
+      MOODLE_DB_PASS: ${MYSQL_PASSWORD:-moodle}
+      MOODLE_ADMIN_USER: ${MOODLE_ADMIN_USER:-admin}
+      MOODLE_ADMIN_PASS: ${MOODLE_ADMIN_PASSWORD:-Admin1234!}
+      MOODLE_ADMIN_EMAIL: ${MOODLE_ADMIN_EMAIL:-admin@example.com}
+      MOODLE_WWWROOT: ${MOODLE_WWWROOT:-http://localhost}
+      MOODLE_SSL_PROXY: ${MOODLE_SSL_PROXY:-false}
+      MOODLE_TIMEZONE: ${MOODLE_TIMEZONE:-Asia/Tokyo}
+      MOODLE_SESSION_COOKIE_SUFFIX: ${MOODLE_SESSION_COOKIE_SUFFIX:-cra}
+      TZ: ${MOODLE_TIMEZONE:-Asia/Tokyo}
+      CODERUNNER_AGENT_URL: ${CODERUNNER_AGENT_URL:-http://host.docker.internal:8001}
+    volumes:
+      - ./moodle-src:/var/www/html/moodle
+      - moodle_data:/var/www/moodledata
+      - ./plugins/coderunner:/var/www/html/moodle/question/type/coderunner
+      - ./plugins/qbehaviour:/var/www/html/moodle/question/behaviour/adaptive_adapted_for_coderunner
+      - ./plugins/local_coderunner_agent:/var/www/html/moodle/local/coderunner_agent
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost/login/index.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 180s
+
+  # ── Jobe (code execution for CodeRunner) ─────────────────────────────────
+  # Internal only — Moodle reaches Jobe at http://cra-jobe on the Docker network.
+  jobe:
+    image: trampgeek/jobeinabox:latest
+    container_name: cra-jobe
+    restart: unless-stopped
+
+  # ── LLM Agent Backend ─────────────────────────────────────────────────────
+  agent:
+    build: ./agent
+    container_name: cra-agent
+    ports:
+      - "${AGENT_PORT:-8001}:8001"
+    env_file: .env
+    volumes:
+      - agent_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  mysql_data:
+  moodle_data:
+  agent_data:

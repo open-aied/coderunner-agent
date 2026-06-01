@@ -1,0 +1,50 @@
+--- a/renderer.php
++++ b/renderer.php
+
+[1] Add require_once near the top of renderer.php (after defined('MOODLE_INTERNAL') || die();)
+
++require_once(__DIR__ . '/agent_panel.php');
+
+
+[2] In the specific_feedback() method, append the agent panel at the end.
+    Find the closing  `return $html;`  inside specific_feedback() and insert before it:
+
+     // === CodeRunner Agent Panel ===
++    global $PAGE;
++    $html .= coderunner_agent_panel($qa, $options, $PAGE);
+     // ==============================
+
+     return $html;
+
+
+[3] Add CSS in the same method (or in the plugin's styles.css):
+    Copy coderunner-patch/styles/agent_panel.css into:
+    question/type/coderunner/styles.css   (append to end)
+    — OR —
+    Link it from renderer.php:
++    $PAGE->requires->css('/question/type/coderunner/styles/agent_panel.css');
+
+
+[4] Copy the AMD source file:
+    cp coderunner-patch/amd/src/agent_panel.js \
+       question/type/coderunner/amd/src/agent_panel.js
+
+    Then rebuild AMD (from Moodle root):
+    grunt amd --root=question/type/coderunner
+    — OR for development without grunt, use the un-minified version by adding
+    to config.php:  $CFG->cachejs = false;  $CFG->jsrev = -1;
+
+
+[5] (Optional) Add lang strings to:
+    question/type/coderunner/lang/en/qtype_coderunner.php
+
++    $string['agenttitle']               = 'AI Learning Assistant';
++    $string['phase']                    = 'SRL Phase';
++    $string['phase_planning']           = 'Planning';
++    $string['phase_program_creation']   = 'Program Creation';
++    $string['phase_error_correction']   = 'Error Correction';
++    $string['phase_self_reflection']    = 'Self-Reflection';
++    $string['strategy']                 = 'Strategy';
++    $string['customquestion']           = 'Your question (optional)';
++    $string['customquestion_placeholder'] = 'e.g. Why is my loop not working?';
++    $string['askagent']                 = 'Ask Agent';
