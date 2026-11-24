@@ -58,8 +58,13 @@ services:
 
   # ── Jobe (code execution for CodeRunner) ─────────────────────────────────
   # Internal only — Moodle reaches Jobe at http://cra-jobe on the Docker network.
+  # Built locally so apt security updates (e.g. PHP) are applied; override base
+  # via JOBE_BASE (tag or digest) for reproducible or team-specific images.
   jobe:
-    image: trampgeek/jobeinabox:latest
+    build:
+      context: ./jobe
+      args:
+        JOBE_BASE: ${JOBE_BASE:-trampgeek/jobeinabox:latest}
     container_name: cra-jobe
     restart: unless-stopped
 
